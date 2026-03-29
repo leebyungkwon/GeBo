@@ -1,0 +1,24 @@
+name: pdd-pipeline-plugin
+version: 1.0.0
+description: |
+  PDD(Plan-Design-Dev) Pipeline Automation Plugin.
+  Transforms a simple idea into a fully implemented and verified product through an 8-stage agent workflow.
+
+entry_points:
+  - agents/researcher.md
+  - agents/product-manager.md
+  - agents/planner.md
+  - agents/service-planner.md
+  - agents/designer.md
+  - agents/publisher.md
+  - agents/fe-developer.md
+  - agents/be-developer.md
+  - agents/technical-architect.md
+  - agents/verifier.md
+  # --- Scripts ---
+  - ref: scripts/generate_research_plan.js
+  - ref: scripts/review-spec.js
+  - ref: scripts/verify_stitch_mapping.js
+
+themes:
+  - ref: themes/dark-mode.json

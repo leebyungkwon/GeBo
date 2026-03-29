@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs ls:*)",
+      "Bash(find . -type f \\\\\\(-name README.md -o -name .env* \\\\\\))",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//c/Users/Administrator/.gemini/workspace/Bo/docs/pages/roles/**)",
+      "Bash(done)",
+      "Bash(find C:/Users/Administrator/.gemini/workspace/Bo -name *.md -newer C:/Users/Administrator/.gemini/workspace/Bo/PROJECT_PROGRESS.md -not -path */node_modules/* -not -path */.plugin/*)",
+      "Bash(find C:/Users/Administrator/.gemini/workspace/Bo/.plugin -name *.md -newer C:/Users/Administrator/.gemini/workspace/Bo/PROJECT_PROGRESS.md)",
+      "Bash(find C:/Users/Administrator/.gemini/workspace/Bo -name *template* -o -name *Template*)",
+      "Bash(for d:*)",
+      "Read(//c/Users/Administrator/.gemini/workspace/Bo/bo/src/app/admin/templates/**)",
+      "Bash(taskkill //PID 2668 //F)",
+      "Bash(taskkill //PID 12152 //F)",
+      "Bash(curl -s http://localhost:3002 -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\" http://localhost:8002/api/v1/roles -H \"Authorization: Bearer $TOKEN\")"
+    ]
+  }
+}

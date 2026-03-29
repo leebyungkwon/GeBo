@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\" http://localhost:8002/api/v1/roles)",
+      "Bash(./gradlew clean:*)",
+      "Bash(./gradlew bootRun)",
+      "Bash(PGPASSWORD=\"1234\" psql -h localhost -U postgres -d bo -c \"UPDATE admin SET password = ''$2b$12$iZVf1ZhtqxgiIAhhnpqWk.qFUn/Q2ocz8ZFwjclwxcLwmdPtFOgpq'' WHERE email = ''admin@ge.com'';\")",
+      "Bash(node -e \":*)",
+      "Bash(find c:/Users/Administrator/.gemini/workspace/Bo/bo/src/components -type f -name *ake* -o -name *Make*)",
+      "Bash(xargs grep:*)"
+    ]
+  }
+}

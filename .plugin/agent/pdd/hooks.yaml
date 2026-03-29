@@ -1,0 +1,83 @@
+hooks:
+  # 1. PM 완료 -> Planner 호출 (Forward)
+  - name: "PM to Planner Hook"
+    trigger: 
+      event: "agent_finished"
+      source_agent: "product-manager"
+    action:
+      target_agent: "planner"
+      input_source: "docs/01-plan/initial_requirements.md"
+      command: "Analyze these requirements and create a technical spec."
+
+  # 2. Planner 완료 -> Designer 호출 (순서 변경)
+  - name: "Planner to Designer Hook"
+    trigger:
+      event: "agent_finished"
+      source_agent: "planner"
+    action:
+      target_agent: "designer"
+      input_source: "docs/01-plan/functional_spec.md"
+      command: "Create UI design options based on this functional spec."
+
+  # 3. Designer 완료 -> Architect 호출
+  - name: "Designer to Architect Hook"
+    trigger:
+      event: "agent_finished"
+      source_agent: "designer"
+    action:
+      target_agent: "technical-architect"
+      input_sources:
+        - "docs/01-plan/functional_spec.md"
+        - "docs/02-design/ui_guide.md"
+      command: "Create a system architecture that supports this design."
+
+  # 4. Architect 완료 -> Developer 호출
+  - name: "Architect to Developer Hook"
+    trigger:
+      event: "agent_finished"
+      source_agent: "technical-architect"
+    action:
+      target_agent: "developer"
+      input_sources:
+        - "docs/02-design/ui_guide.md"
+        - "docs/02-design/system_architecture.md"
+      command: "Implement the code based on these specs."
+
+  # 4. Developer 완료 -> Verifier 호출 (Check)
+  - name: "Developer to Verifier Hook"
+    trigger:
+      event: "agent_finished"
+      source_agent: "developer"
+    action:
+      target_agent: "verifier"
+      command: "Verify the implemented code against the requirements."
+
+  # -------------------------------------------------------------
+  # [NEW] Feedback Loops (Verification Fail -> Retry)
+  # -------------------------------------------------------------
+
+  # 5. [FAIL] Design Rejection -> Designer Re-Invoke
+  - name: "Design Feedback Loop"
+    trigger:
+      event: "verification_failed"
+      source_agent: "verifier"
+      target_artifact: "ui_guide.md" # 검증 대상 파일명 매칭
+    action:
+      target_agent: "designer"
+      input_sources:
+        - "docs/02-design/ui_guide.md" # 기존 파일
+        - "docs/03-verify/report.md"   # 지적 사항 리포트
+      command: "Fix the design based on the verification feedback."
+
+  # 6. [FAIL] Code Rejection -> Developer Re-Invoke
+  - name: "Code Feedback Loop"
+    trigger:
+      event: "verification_failed"
+      source_agent: "verifier"
+      target_artifact: "src/" # 코드 폴더 매칭
+    action:
+      target_agent: "developer"
+      input_sources:
+        - "src/"
+        - "docs/03-verify/report.md"
+      command: "Fix the bugs and code quality issues reported by Verifier."
