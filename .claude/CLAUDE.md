@@ -47,10 +47,16 @@ BE (API): 8002
 - 추상화의 경우 적당하고 적절한추상화
 - 성능상 이슈가 없도록 해야함
 
-## 10. PDD 워크플로우 필수 규칙
-- PDD 진행 시 반드시 **`.plugin/agent/pdd/workflow_guide.md`의 섹션 3 (전 단계 공통 필수 규칙)**을 먼저 읽고 숙지
-- **개발 단계(FE/BE) 진입 시**: 코드 작성 전 반드시 **소스코드 난이도(초보/중급/고급)** 확인
-- **모든 단계**: 작업 전 설명 → 승인 → 작업 → 체크리스트 검증 → 핸드오버 승인
+| 단계 | 에이전트 파일 경로 |
+|---|---|
+| 01 PM (기획) | `.plugin/agent/pdd/agents/01.product-manager.md` |
+| 02 Designer (디자인) | `.plugin/agent/pdd/agents/02.designer.md` |
+| 03 Publisher (퍼블) | `.plugin/agent/pdd/agents/03.publisher.md` |
+| 04 Service Planner (화면기획) | `.plugin/agent/pdd/agents/04.service-planner.md` |
+| 05 FE Developer (FE개발) | `.plugin/agent/pdd/agents/05.fe-developer.md` |
+| 06 Architect (BE설계) | `.plugin/agent/pdd/agents/06.technical-architect.md` |
+| 07 BE Developer (BE개발) | `.plugin/agent/pdd/agents/07.be-developer.md` |
+| 08 Verifier (검증) | `.plugin/agent/pdd/agents/08.verifier.md` |
 
 ### ⚠️ BE/FE 설계 필수 순서 (순서 위반 절대 금지)
 1. **DB 문서 먼저** → `docs/db/{기능}/db_{기능}.md` 작성 후 승인
@@ -60,13 +66,12 @@ BE (API): 8002
 - ❌ 두 문서를 한 번에 섞어서 작성 금지
 - ✅ 기존 DB 문서(`docs/db/` 하위) 반드시 먼저 참조하여 형식 통일
 
-## 11. 프로젝트 진행 현황
-- 대화 시작 시 **`.claude/progress.md`** 를 읽어 현재까지 진행된 작업 내용을 파악할 것
-- 새 기능 완료 시 `progress.md`를 업데이트할 것
-
 ## 12. 신규 파일 생성 전 기존 파일 참조 의무
 - 신규 페이지/컴포넌트 생성 전, **동일 디렉토리 또는 동일 계열 기존 파일을 반드시 먼저 읽고** 레이아웃·스타일·컴포넌트 구조를 파악할 것
 - 파악한 구조를 기준으로 **통일성을 유지**하여 작업
 - **동작 패턴도 반드시 참조**: 공통 패턴 방식등등(toast vs alert), 성공 피드백, API 호출 패턴 등 — 기존 파일과 동일하게 구현
+- **시각적 디자인도 반드시 참조**: 관련 컴포넌트(빌더 미리보기, 기존 렌더러 등)의 UI 디자인(레이아웃·색상·스타일·구조)을 코드 구현 시 동일하게 적용
+  - 빌더에서 미리보기로 정의된 디자인이 있다면, 실제 렌더러도 그 디자인을 그대로 따른다
+  - 미리보기와 렌더러가 서로 다른 디자인을 갖는 것은 명백한 rule 12 위반이다
 - 참조 없이 독립적으로 디자인하는 것은 **절대 금지**
 - 참조할 파일이 없을 경우에만 독자적으로 설계하되, 사용자에게 먼저 고지할 것
