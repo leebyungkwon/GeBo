@@ -24,3 +24,22 @@ Thumbs.db
 .plugin/**/*.resolved
 .plugin/**/*.resolved.*
 .plugin/**/*.metadata.json
+
+# 로그 파일
+*.log
+be_startup*.log
+fe_startup*.log
+startup_log*.txt
+compile_log.txt
+bootRun.log
+boot_error.log
+spring.log
+be_startup_new.log
+
+# 백업 파일
+*.bak
+
+# 임시 테스트 페이지
+bo/src/app/admin/test1/
+bo/src/app/admin/test2/
+bo/src/app/admin/test3/

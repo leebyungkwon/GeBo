@@ -1,6 +1,25 @@
 {
   "permissions": {
     "allow": [
+      "Bash",
+      "Bash(powershell:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(powershell -command:*)",
+      "Bash(./gradlew:*)",
+      "Bash(gradlew:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(cmd:*)",
+      "Bash(cmd /c:*)",
+      "Bash(taskkill:*)",
+      "Bash(tasklist:*)",
+      "Bash(curl:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(echo:*)",
       "Bash(xargs ls:*)",
       "Bash(find . -type f \\\\\\(-name README.md -o -name .env* \\\\\\))",
       "Bash(for f:*)",
@@ -15,7 +34,8 @@
       "Bash(taskkill //PID 2668 //F)",
       "Bash(taskkill //PID 12152 //F)",
       "Bash(curl -s http://localhost:3002 -o /dev/null -w \"%{http_code}\")",
-      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\" http://localhost:8002/api/v1/roles -H \"Authorization: Bearer $TOKEN\")"
+      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\" http://localhost:8002/api/v1/roles -H \"Authorization: Bearer $TOKEN\")",
+      "Bash(find c:/Users/Administrator/.gemini/workspace/Bo/bo/src/app/admin/templates/widget -type f -name *.tsx -o -name *.ts -o -name *.jsx -o -name *.js)"
     ]
   }
 }

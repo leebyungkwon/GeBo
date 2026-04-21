@@ -1,0 +1,15 @@
+rule 한글자한글자 정독
+
+표준.md 정독해서 규칙 지켜야해
+
+builder-guide_v0.1.md 정독해주고
+widget-builder-guide.md 진행할거야.
+input-component-guide.md, output-component-guide.md 정리하는 중이라 디테일하게 파악을 해줘야해
+
+지금 내가 하려는게 
+INPUT 내부를  컨텐츠/필드를 항목별 컴포넌트화.
+-> 현재는 WIDGET 빌더에만 적용 했지만 추후 다른 빌더에 적용예정, 빌더 내부에 인라인 코딩금지
+OUTPUT 내부 컨텐츠/필드를 항목별 컴포넌트화.
+-> 미리보기/파일생성/빌더생성메뉴에서 컴포넌트를 재사용, 인라인코딩 금지,
+
+이 내용이야. 무조건 지켜야 하는 내용이야!
