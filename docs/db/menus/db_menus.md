@@ -7,6 +7,7 @@ erDiagram
     MENU {
         BIGINT id PK "AUTO_INCREMENT"
         VARCHAR(50) name "NOT NULL - 메뉴명"
+        VARCHAR(500) description "NULL 허용 - 메뉴 설명"
         VARCHAR(200) url "NULL 허용 - 메뉴 URL"
         VARCHAR(30) icon "NOT NULL DEFAULT 'Folder' - 아이콘명"
         BIGINT parent_id FK "NULL - 대메뉴는 NULL"
@@ -38,6 +39,7 @@ erDiagram
 |:---|:---|:---|:---|:---|
 | `id` | BIGINT | NO | AUTO_INCREMENT | PK |
 | `name` | VARCHAR(50) | NO | - | 메뉴명 |
+| `description` | VARCHAR(500) | YES | NULL | 메뉴 설명 (페이지 상단에 표시) |
 | `url` | VARCHAR(200) | YES | NULL | 메뉴 URL (대메뉴는 NULL 가능) |
 | `icon` | VARCHAR(30) | NO | 'Folder' | lucide-react 아이콘명 |
 | `parent_id` | BIGINT | YES | NULL | 상위 메뉴 ID (self-join FK) |
@@ -79,6 +81,7 @@ erDiagram
 CREATE TABLE menu (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
+    description VARCHAR(500),
     url VARCHAR(200),
     icon VARCHAR(30) NOT NULL DEFAULT 'Folder',
     parent_id BIGINT,

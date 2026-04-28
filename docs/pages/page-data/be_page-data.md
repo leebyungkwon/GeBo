@@ -102,6 +102,7 @@ com.ge.bo/
 
 ```
 GET /api/v1/page-data/user-list?name=홍길동&status=active&page=0&size=20
+GET /api/v1/page-data/cat-main?eq_depth=2&eq_parentId=1
 ```
 
 **Query Params:**
@@ -110,7 +111,16 @@ GET /api/v1/page-data/user-list?name=홍길동&status=active&page=0&size=20
 |:---|:---|:---|:---|
 | page | int | 0 | 페이지 번호 (0-based) |
 | size | int | 20 | 페이지 크기 |
-| 그 외 | String | - | data_json 필드 검색 조건 (fieldKey=value 형태) |
+| 그 외 | String | - | data_json 필드 검색 조건 (fieldKey=value 형태) — ILIKE 부분 일치 |
+| eq_{fieldKey} | String | - | data_json 필드 **정확 일치** 조건 — `eq_` 접두사 제거 후 `=` 비교 |
+
+> **`eq_` 접두사 규칙**: 파라미터 키가 `eq_`로 시작하면 접두사를 제거한 필드명으로 정확 일치(`=`) 검색한다.
+> 카테고리 depth/parentId 같이 정수 ID를 정확히 일치시켜야 하는 경우에 사용한다.
+>
+> 예시:
+> - `?eq_parentId=1` → `data_json->>'parentId' = '1'`
+> - `?eq_depth=2` → `data_json->>'depth' = '2'`
+> - `?name=홍` → `data_json->>'name' ILIKE '%홍%'` (기존 방식 유지)
 
 **Response 200:**
 ```json
@@ -192,36 +202,57 @@ DELETE /api/v1/page-data/user-list/1
 ```mermaid
 flowchart TD
     A[GET /page-data/{slug}] --> B[Query Params 파싱]
-    B --> C[page, size 제거 → 나머지는 검색 조건]
+    B --> C["page, size, sort 제거 → 나머지는 검색 조건"]
     C --> D{검색 조건 있음?}
     D -- 없음 --> E[template_slug = slug 조건만으로 조회]
     D -- 있음 --> F[동적 네이티브 쿼리 생성]
-    F --> G["각 key: input/textarea → ILIKE '%value%'"]
-    F --> H["각 key: select/radio → = 'value'"]
-    G & H --> I[WHERE 절 조합]
-    E & I --> J[created_at DESC 정렬 + 페이징]
-    J --> K[PageDataListResponse 반환]
-    K --> L[200 OK]
+    F --> G{키가 eq_ 로 시작?}
+    G -- 예 --> H["eq_ 제거 후 fieldKey 추출 → data_json->>fieldKey = value (정확 일치)"]
+    G -- 아니오 --> I["data_json->>key ILIKE '%value%' (부분 일치)"]
+    H & I --> J[WHERE 절 조합]
+    E & J --> K[created_at DESC 정렬 + 페이징]
+    K --> L[PageDataListResponse 반환]
+    L --> M[200 OK]
 ```
 
 **핵심 비즈니스 규칙:**
-1. `page`, `size`는 페이징 예약어 — 검색 조건에서 제외
+1. `page`, `size`, `sort`는 페이징/정렬 예약어 — 검색 조건에서 제외
 2. 빈 문자열(`""`) 파라미터는 검색 조건에서 제외
-3. 기본 정렬: `created_at DESC`
-4. 기본 페이지 크기: 20
+3. `eq_`로 시작하는 파라미터 → 접두사 제거 후 **정확 일치(`=`)** 처리
+4. 그 외 파라미터 → **부분 일치(ILIKE)** 처리 (기존 방식 유지)
+5. 기본 정렬: `created_at DESC`
+6. 기본 페이지 크기: 20
 
 **동적 쿼리 생성 전략 (EntityManager 사용):**
 ```sql
 SELECT * FROM page_data
 WHERE template_slug = :slug
-  AND data_json->>'name' ILIKE '%홍길동%'   -- input 타입
-  AND data_json->>'status' = 'active'       -- select 타입
+  AND data_json->>'name'     ILIKE '%홍길동%'  -- 일반 파라미터 → ILIKE
+  AND data_json->>'parentId' = '1'             -- eq_parentId=1 → 정확 일치
+  AND data_json->>'depth'    = '2'             -- eq_depth=2    → 정확 일치
 ORDER BY created_at DESC
 LIMIT :size OFFSET :offset
 ```
 
-> 필드 타입(input vs select) 구분은 현재 단계에서 **모든 검색을 ILIKE**로 통일.
-> 추후 configJson 기반 타입 구분 확장 가능.
+**Java 처리 로직 (PageDataService):**
+```java
+for (Map.Entry<String, String> entry : searchParams.entrySet()) {
+    String key   = entry.getKey();
+    String value = entry.getValue();
+    if (value == null || value.isBlank()) continue; // 빈 값 제외
+
+    if (key.startsWith("eq_")) {
+        // eq_ 접두사 제거 후 정확 일치
+        String fieldKey = key.substring(3);
+        sql.append(" AND data_json->>'").append(fieldKey).append("' = :p").append(idx);
+        params.put("p" + idx, value);
+    } else {
+        // 기존 ILIKE 부분 일치
+        sql.append(" AND data_json->>'").append(key).append("' ILIKE :p").append(idx);
+        params.put("p" + idx, "%" + value + "%");
+    }
+    idx++;
+}
 
 ### 6.2 등록
 
@@ -321,6 +352,22 @@ flowchart TD
 
 **동적 검색은 Repository가 아닌 Service에서 `EntityManager.createNativeQuery()` 사용**
 
+### eq_ 정확 일치 쿼리 예시
+
+```sql
+-- 요청: GET /page-data/cat-main?eq_depth=2&eq_parentId=1&name=상의
+SELECT * FROM page_data
+WHERE template_slug = 'cat-main'
+  AND data_json->>'depth'    = '2'          -- eq_depth    → 정확 일치
+  AND data_json->>'parentId' = '1'          -- eq_parentId → 정확 일치
+  AND data_json->>'name'     ILIKE '%상의%' -- name        → ILIKE
+ORDER BY created_at DESC
+LIMIT 20 OFFSET 0;
+```
+
+> **파라미터 예약어 목록** (검색 조건에서 제외):
+> `page`, `size`, `sort`
+
 ---
 
 ## 11. BE 개발 체크리스트
@@ -347,9 +394,13 @@ flowchart TD
 
 ### 11.3 목록 조회 동적 검색
 
-- [ ] `page`, `size` 파라미터가 검색 조건에서 제외되는가?
+- [ ] `page`, `size`, `sort` 파라미터가 검색 조건에서 제외되는가?
 - [ ] 빈 문자열 파라미터가 검색 조건에서 제외되는가?
 - [ ] 검색 조건이 JSONB 컬럼에 ILIKE로 적용되는가?
+- [ ] `eq_` 접두사 파라미터가 정확 일치(`=`)로 처리되는가?
+- [ ] `eq_` 접두사 제거 후 올바른 fieldKey로 쿼리가 생성되는가?
+- [ ] `eq_parentId=1` 요청 시 `data_json->>'parentId' = '1'` 조건이 적용되는가?
+- [ ] `eq_` 파라미터와 일반 파라미터가 함께 사용될 때 모두 정상 동작하는가?
 - [ ] 결과가 `created_at DESC` 기준으로 정렬되는가?
 - [ ] 페이지네이션이 올바르게 동작하는가? (`totalElements`, `totalPages` 정확)
 

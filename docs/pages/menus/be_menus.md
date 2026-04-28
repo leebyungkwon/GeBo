@@ -39,6 +39,7 @@ com.ge.bo/
 |:---|:---|:---|:---|:---|
 | id | id | Long | @Id, AUTO_INCREMENT | PK |
 | name | name | String | @Column(length=50, NOT NULL) | 메뉴명 |
+| description | description | String | @Column(length=500, NULL) | 메뉴 설명 |
 | url | url | String | @Column(length=200, NULL) | 메뉴 URL |
 | icon | icon | String | @Column(length=30, NOT NULL, default='Folder') | 아이콘 |
 | parent | parent_id | Menu | @ManyToOne(LAZY), FK | 상위 메뉴 (self-join) |
@@ -73,6 +74,7 @@ com.ge.bo/
 | 필드 | 타입 | 필수 | Bean Validation | 에러 메시지 |
 |:---|:---|:---|:---|:---|
 | name | String | Y | @NotBlank, @Size(max=50), @Pattern | 메뉴명은 한글, 영문, 숫자, 공백, -, _, ()만 사용 가능합니다. |
+| description | String | N | @Size(max=500) | 메뉴 설명은 500자 이하로 입력해주세요. |
 | url | String | N | @Size(max=200), @Pattern(^$\|^/...) | URL은 /로 시작하는 경로를 입력해주세요. |
 | icon | String | Y | @NotBlank | 아이콘을 선택해주세요. |
 | parentId | Long | N | - | - |
@@ -80,7 +82,7 @@ com.ge.bo/
 | sortOrder | Integer | Y | @Min(1), @Max(999) | 정렬 순서는 1~999 사이여야 합니다. |
 | visible | Boolean | Y | - | - |
 
-**MenuResponse**: id, name, url, icon, parentId, menuType, sortOrder, visible, createdAt, updatedAt, children (재귀)
+**MenuResponse**: id, name, description, url, icon, parentId, menuType, sortOrder, visible, createdAt, updatedAt, children (재귀)
 
 **RoleMenuResponse**: menuId, roleId, roleName(code), roleDisplayName, hasAccess
 
@@ -357,6 +359,7 @@ flowchart TD
 - [ ] name: @NotBlank가 적용되었는가?
 - [ ] name: @Size(max=50)이 적용되었는가?
 - [ ] name: @Pattern(한글/영문/숫자/공백/특수일부)이 적용되었는가?
+- [ ] description: @Size(max=500)이 적용되었는가? (선택 필드)
 - [ ] url: @Size(max=200)이 적용되었는가?
 - [ ] url: @Pattern(빈값 허용 또는 /시작)이 적용되었는가?
 - [ ] icon: @NotBlank가 적용되었는가?
