@@ -35,7 +35,53 @@
       "Bash(taskkill //PID 12152 //F)",
       "Bash(curl -s http://localhost:3002 -o /dev/null -w \"%{http_code}\")",
       "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\" http://localhost:8002/api/v1/roles -H \"Authorization: Bearer $TOKEN\")",
-      "Bash(find c:/Users/Administrator/.gemini/workspace/Bo/bo/src/app/admin/templates/widget -type f -name *.tsx -o -name *.ts -o -name *.jsx -o -name *.js)"
+      "Bash(find c:/Users/Administrator/.gemini/workspace/Bo/bo/src/app/admin/templates/widget -type f -name *.tsx -o -name *.ts -o -name *.jsx -o -name *.js)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "PowerShell(cmd /c \"python3 --version\")",
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "mcp__plugin_playwright_playwright__browser_type",
+      "mcp__plugin_playwright_playwright__browser_fill_form",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_run_code_unsafe",
+      "mcp__plugin_playwright_playwright__browser_file_upload",
+      "mcp__plugin_playwright_playwright__browser_handle_dialog",
+      "PowerShell(New-Item *)",
+      "PowerShell(claude mcp *)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3003\" -UseBasicParsing -TimeoutSec 3 | Select-Object StatusCode)",
+      "PowerShell(Invoke-RestMethod -Uri \"http://localhost:3003/api/exchange-rate\" | ConvertTo-Json)",
+      "mcp__plugin_playwright_playwright__browser_console_messages",
+      "mcp__plugin_playwright_playwright__browser_network_requests",
+      "mcp__plugin_playwright_playwright__browser_select_option",
+      "mcp__plugin_playwright_playwright__browser_press_key"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -File \"C:\\Users\\Administrator\\.gemini\\workspace\\Bo\\agent-monitor\\hooks\\pre.ps1\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -File \"C:\\Users\\Administrator\\.gemini\\workspace\\Bo\\agent-monitor\\hooks\\post.ps1\""
+          }
+        ]
+      }
     ]
   }
 }

@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  gitea:
+    image: gitea/gitea:latest
+    container_name: gitea
+    # 재시작 정책: Docker 재시작 시 자동 복구
+    restart: unless-stopped
+    ports:
+      # 웹 UI 및 API 포트
+      - "4000:3000"
+      # SSH 포트 (git push via SSH)
+      - "2222:22"
+    volumes:
+      # Gitea 데이터 영구 저장
+      - C:/gitea:/data
+    environment:
+      # 로컬 호스트 설정
+      - GITEA__server__DOMAIN=localhost
+      - GITEA__server__HTTP_PORT=3000
+      - GITEA__server__ROOT_URL=http://localhost:4000
+      # DB: SQLite (로컬용 간단 설정)
+      - GITEA__database__DB_TYPE=sqlite3
+      - GITEA__database__PATH=/data/gitea.db
+      # 타임존
+      - TZ=Asia/Seoul
